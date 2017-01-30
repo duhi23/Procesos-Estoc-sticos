@@ -1,0 +1,146 @@
+\documentclass[11pt,a4paper,oneside]{article}
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage{pst-eucl,pstricks,pstricks-add,multido, pst-plot}
+\usepackage[utf8]{inputenc}
+%\usepackage[latin1]{inputenc}
+\usepackage[spanish,activeacute]{babel}
+\usepackage[a4paper,margin=2.3cm]{geometry}
+\usepackage{times}
+\usepackage[T1]{fontenc}
+\usepackage{titlesec}
+\usepackage{color}
+\usepackage{url}
+\usepackage{float}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{lipsum}
+\usepackage{multicol}
+\usepackage{float}
+\usepackage{lmodern}
+\usepackage{epstopdf}
+\newcommand{\code}[1]{\fcolorbox{white}{gray!15}{#1}}
+\definecolor{lila}{rgb}{0.82, 0.62, 0.91}
+\definecolor{rosa}{rgb}{0.99, 0.76, 0.8}
+\definecolor{tomate}{rgb}{0.98, 0.84, 0.65}
+\definecolor{celeste}{rgb}{0.69, 0.88, 0.9}
+\parindent=0mm
+
+\title{Trabajo en Grupo}
+\author{Metodología  de Black Scholes Merton}
+\date{Enero 2017}
+\begin{document}
+\maketitle
+{\bf Integrantes:}
+\begin{itemize}
+      \item Diego Huaraca
+      \item David Ortiz
+      \item Ludysa González
+      \item David Palán
+\end{itemize}
+
+
+Considere un activo financiero cuyo precio en el instante $t$, $(X(t))$ evoluciona de acuerdo con la siguiente ecuación diferencial estocástica (EDE):
+\begin{align*}
+      dX(t) & = \mu X(t)dt+\sigma X(t)dB(t)\\
+      X(0) & = 1
+\end{align*}
+
+
+donde $\mu$ y $\sigma$ son su rentabilidad y volatilidad unitarias esperadas, respectivamente, y $\{B(t), t\geq 0\}$ es un proceso de Wiener o movimiento browniano.
+\begin{itemize}
+      \item [a)] Compruebe que $\{X(t), t\geq 0\}$ es un proceso de Itô, identificando su coeficiente de deriva ($\mu (x,t)$ o media infinitesimal) y su coeficiente de difusión ($\sigma (x,t)$ o desviación típica infinitesimal).
+      
+      Un proceso estocástico $\{X_t, t\geq 0\}$ se denomina proceso de Itô si puede expresarse como:
+      \[X_t = X_0 + \int_0^t \mu_s ds + \int_0^t \sigma dB_s\]
+      
+      Integrando la (EDE) de $0$ a $t$, se tiene:
+      \begin{align*}
+            \int_0^t dX(t) &= \int_0^t \mu X(s) ds + \int_0^t \sigma X(s)dB_s\\
+            X(t) &= X(0) + \int_0^t \mu X(s) ds + \int_0^t \sigma X(s)dB_s\\
+            X(t) &= 1 + \int_0^t \mu X(s) ds + \int_0^t \sigma X(s)dB_s
+      \end{align*}
+      
+      por lo tanto, $\{X(t), t\geq 0\}$ es un proceso de Itô con coeficiente de deriva $\mu(t,x)=\mu X(t)$ y coeficiente de difusión $\sigma(t,x)=\sigma X(t)$.
+      
+      
+      \item [b)] Aplique el lema de Itô a la función $f(t,x) = \ln(x)$ para comprobar que:
+      \[d\ln(X_t)=\left(\mu - \frac{\sigma^2}{2}\right)dt + \sigma dB_t\]
+      
+      Usando el Lema de Itô sobre la función $f(t,x)=\ln(x)$, obtenemos:
+      \[\frac{\partial f}{\partial t}=0, \quad \frac{\partial f}{\partial x}=\frac{1}{x}, \quad \frac{\partial^2 f}{\partial x^2}=-\frac{1}{x^2}, \quad \mu(t,x)=\mu x,\quad \sigma(t,x)=\sigma x \]
+      Reemplazamos los resultados anteriores en la notación diferencial:
+      \begin{align*}
+            df(t,X_t) &= \left(\frac{\partial f}{\partial t}(t,X_t) + \frac{\partial f}{\partial x}(t,X_t)\mu(t,x) +\frac{1}{2}\frac{\partial^2 f}{\partial x^2}(t,X_t)\sigma^2 (t,x) \right)dt + \frac{\partial f}{\partial x}(t,X_t)\sigma(t,x) dB_t\\
+            &= \left(0+\frac{1}{x}\mu x -\frac{1}{2}.\frac{1}{x^2} \sigma^2 x^2\right)dt + \frac{1}{x}\sigma x dB_t\\
+            &= \left(\frac{\mu x}{x} - \frac{\sigma^2 x^2}{2x^2}\right)dt + \frac{\sigma x}{x}dB_t\\
+            &= \left(\mu - \frac{\sigma^2}{2}\right)dt + \sigma dB_t
+      \end{align*}
+
+por tanto,
+\[d\ln(X_t)=\left(\mu - \frac{\sigma^2}{2}\right)dt + \sigma dB_t\]
+
+      \item [c)] Calculando la integral entre $0$ y $t$ en ambos miembros de la expresión anterior,
+compruebe que:
+\[\ln(X_t) \sim N\left(\mu t - \frac{\sigma^2 t}{2} , \sigma \sqrt{t} \right)\]
+      y que, por lo tanto, $X_t$ sigue una distribución logarítmico-normal.
+      
+      Integramos la expresión del item anterior entre $0$ y $t$, y obtenemos:
+      \begin{align*}
+            \int_0^t d\ln(X_t) &= \int_0^t \mu - \frac{\sigma^2}{2} ds + \int_0^t \sigma dB_s\\
+            \ln(X_t)-\ln(X_0) &=\left(\mu-\frac{\sigma^2}{2}\right)s \Big|_0^t + \sigma \int_0^t dB_s\\
+            \ln(X_t) &= \mu t - \frac{\sigma^2}{2}t + \sigma \int_0^t dB_s
+      \end{align*}
+      dado que el integrando es una función real, concluímos que $\ln(X_t)$ sigue una distribución normal, cuyos parámetros se calculan a continuación:
+      \begin{align*}
+            E\left[\ln(X_t)\right] &= E\left[\mu t - \frac{\sigma^2}{2}t + \sigma \int_0^t dB_t\right]\\
+                        &= E[\mu t] - E\left[\frac{\sigma^2}{2}t\right] + \sigma E\left[\int_0^t dB_t\right]\\
+                        &= \mu t - \frac{\sigma^2}{2}t + \sigma E\left[B(t)-B(0)\right]\\
+                        &= \mu t - \frac{\sigma^2}{2}t
+      \end{align*}
+      \begin{align*}
+            Var\left[\ln(X_t)\right] &= Var\left[\mu t - \frac{\sigma^2}{2}t + \sigma \int_0^t dB_t\right]\\
+                          &= Var[\mu t] - Var\left[\frac{\sigma^2}{2}t\right] + Var\left[\sigma \int_0^t dB_t\right]\\
+                          &= \sigma^2 E\left[\int_0^t dB_t\right]\\
+                          &= \sigma^2 E\left[\left(B(t)-B(0)\right)\right]\\
+                          &= \sigma^2 \left(\sqrt{t}\right)^2\\
+                          &= \sigma^2 t
+      \end{align*}
+      luego,
+      \[\ln(X_t) \sim N\left(\mu t - \frac{\sigma^2 t}{2} , \sigma \sqrt{t} \right)\]
+      
+      \item Deducir que: 
+      \[X(t)=\exp\left(\left(\mu - \frac{\sigma^2}{2}\right)t\right). \exp\left(\sigma B(t)\right)\]
+      
+      Del resultado anterior se tiene:
+      \begin{align*}
+            \ln(X_t) &= \mu t -\frac{\sigma^2}{2} t +\sigma \int_0^t dB_t\\
+                  &= \left(\mu-\frac{\sigma^2}{2}\right)t + \sigma\left(B(t)-B(0)\right)\\
+                  &= \left(\mu-\frac{\sigma^2}{2}\right)t + \sigma B(t)\\
+      \end{align*}
+      aplicando exponenciales en ambos lados de la igualdad:
+      \begin{align*}
+            X_t &= \exp\left(\left(\mu-\frac{\sigma^2}{2}\right)t\right) . \exp\left(\sigma B(t)\right)
+      \end{align*}
+      
+      \item [e)] Si ahora se supone que X(0) no vale 1 sino que es cualquier valor, compruebe que:
+      \[X(t) = X(0).\exp\left(\left(\mu-\frac{\sigma^2}{2}\right)t\right) . \exp\left(\sigma B(t)\right)\]
+      
+      del resultado obtenido en el item c, tenemos:
+      \begin{align*}
+            \ln(X_t) - \ln(X_0) &= \mu t -\frac{\sigma^2}{2} t +\sigma \int_0^t dB_t\\
+            \ln\left(\frac{X_t}{X_0}\right) &= \mu t -\frac{\sigma^2}{2} t +\sigma \int_0^t dB_t
+      \end{align*}
+      aplicando exponenciales en ambos lados de la igualdad, se tiene:
+      \begin{align*}
+            \frac{X_t}{X_0} &= \exp\left(\mu t -\frac{\sigma^2}{2} t +\sigma \int_0^t dB_t\right)\\
+                 &= \exp\left(\left(\mu-\frac{\sigma^2}{2}\right)t\right) . \exp\left(\sigma B(t)\right)
+      \end{align*}
+      finalmente se obtiene:
+      \[X(t) = X(0).\exp\left(\left(\mu-\frac{\sigma^2}{2}\right)t\right) . \exp\left(\sigma B(t)\right)\]
+            
+\end{itemize}
+
+
+
+\end{document}
