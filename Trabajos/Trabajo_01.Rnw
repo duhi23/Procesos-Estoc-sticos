@@ -1,0 +1,204 @@
+\documentclass[11pt,a4paper,oneside]{article}
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage{pst-eucl,pstricks,pstricks-add,multido, pst-plot}
+\usepackage[utf8]{inputenc}
+%\usepackage[latin1]{inputenc}
+\usepackage[spanish,activeacute]{babel}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{times}
+\usepackage[T1]{fontenc}
+\usepackage{titlesec}
+\usepackage{color}
+\usepackage{url}
+\usepackage{float}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{lipsum}
+\usepackage{multicol}
+\usepackage{float}
+\usepackage{lmodern}
+\usepackage{epstopdf}
+\newcommand{\code}[1]{\fcolorbox{white}{gray!15}{#1}}
+\definecolor{lila}{rgb}{0.82, 0.62, 0.91}
+\definecolor{rosa}{rgb}{0.99, 0.76, 0.8}
+\definecolor{tomate}{rgb}{0.98, 0.84, 0.65}
+\definecolor{celeste}{rgb}{0.69, 0.88, 0.9}
+\parindent=0mm
+
+\title{Trabajo en Grupo}
+\author{Modelo simple de evaluación de riesgo}
+\date{Diciembre 2016}
+\begin{document}
+\maketitle
+{\bf Integrantes:}
+\begin{itemize}
+      \item Diego Huaraca
+      \item David Ortiz
+      \item Ludysa González
+      \item David Palán
+\end{itemize}
+
+Una aseguradora está evaluando la posibilidad de asegurar la maquinaria de una Empresa. Para tal fin, ha estimado que, si la máquina sufrió alguna avería en un mes determinado, el próximo mes se averiará de nuevo el $10\%$ de las veces y esta probabilidad es del $5\%$ si no se había averiado el mes anterior.\\
+
+Se supone que esta situación sólo depende de las circunstancias de la máquina en el mes anterior y que el esquema se mantiene estable a lo largo del tiempo. En estas condiciones:
+
+\begin{itemize}
+      \item[a)] Elabore un modelo para estudiar esta situación e identifique a qué tipo corresponde.
+      
+      \texttt{Variable Aleatoria:}\\
+      $X_t$: ``Estado actual de la máquina en el tiempo $t$'', con $t=0,1,2,\ldots$
+      
+      \texttt{Conjunto de estados}\\
+      $S=\{\text{Averiada (A)}, \text{Funcionando (F)}\}$
+      
+      \texttt{Conjunto de índices}\\
+      $T=\mathbb{N} \cup \{0\}$
+      
+      Nos encontramos ante una \emph{Cadena de Markov}, pues el estado en el tiempo $t+1$ depende únicamente del estado del mes anterior t.
+      
+      \begin{center}
+      \begin{pspicture}[showgrid=false](0,1)(8,2.3)
+      \psline{<->}(0,1)(3,1)
+      \rput(0.5,1){|}
+      \rput(2.5,1){|}
+      \rput(0.5,1.35){A}
+      \rput(2.5,1.35){A}
+      \pscurve[linecolor=blue]{->}(0.5,1.6)(1.5,1.9)(2.5,1.6)
+      \rput(1.5,2.1){\small $10\%$}
+      %%%
+      \psline{<->}(5,1)(8,1)
+      \rput(5.5,1){|}
+      \rput(7.5,1){|}
+      \rput(5.5,1.35){F}
+      \rput(7.5,1.35){A}
+      \pscurve[linecolor=red]{->}(5.5,1.6)(6.5,1.9)(7.5,1.6)
+      \rput(6.5,2.1){\small $5\%$}
+      \end{pspicture}
+      \end{center}
+      
+      \[P(t,t+1)=P=\left(\begin{array}{cc} 0.1 & 0.9\\ 0.05 & 0.95\end{array}\right)\]
+      
+      Observamos que las probabilidades de transición no dependen de $t$, por lo que tenemos una \emph{Cadena de Markov homogénea}.
+      
+      \item[b)] Si la máquina se ha averiado este mes, calcule la probabilidad de que vuelva a estropearse dentro de dos meses.
+      
+      Dado que la máquina se ha averiado este mes tenemos el vector de estados $V_0=(1,0)$, por tanto:
+      \begin{align*}
+            V_2 &= V_1.P\\
+                &= V_0.P^2\\
+                &= (1,0)\left[\begin{array}{cc} 0.1 & 0.9\\ 0.05 & 0.95\end{array}\right] \left[\begin{array}{cc} 0.1 & 0.9\\ 0.05 & 0.95\end{array}\right]\\
+                &= (1,0)\left[\begin{array}{cc} 0.055 & 0.945\\ 0.0525 & 0.9475\end{array}\right]\\
+                &= (0.055, 0.945)
+      \end{align*}
+      
+      La probabilidad buscada es del $5.5\%$.
+      
+      \item[c)] Si, en un mes determinado, la máquina no se averió, calcule la probabilidad de que tampoco lo haga dentro de n meses.
+      
+      {\bf Autovalores:}
+      
+      \begin{align*}
+            p(\lambda) &= |P-\lambda I|\\
+                       &= \left|\begin{array}{cc} 0.1-\lambda & 0.9\\ 0.05 & 0.95-\lambda \end{array}\right|\\
+                       &= (0.1-\lambda)(0.95-\lambda)-(0.05)(0.9)\\
+                       &= 0.095-0.95\lambda-0.1\lambda+\lambda^2-0.045\\
+                       &= \lambda^2+1.05\lambda+0.05\\
+                       &= (\lambda -1)(\lambda-0.05)
+      \end{align*}
+      
+      por tanto: $\lambda_1=1$, $\lambda_2=0.05$.
+      
+      {\bf Autovectores:}
+      
+      El vector propio $v_1$ asociado al valor propio $\lambda_1=1$ se obtiene como:
+      \[(P-\lambda_1 I)x=0\]
+      \[(P-I)x=0\]
+      \[\left[\left(\begin{array}{cc} 0.1 & 0.9\\ 0.05 & 0.95\end{array}\right) - \left(\begin{array}{cc} 1 & 0\\ 0 & 1\end{array}\right)\right]\left(\begin{array}{c} x_1\\ x_2\end{array}\right)= \left(\begin{array}{c} 0\\ 0\end{array}\right)\]
+      \[\left(\begin{array}{cc} -0.9 & 0.9\\ 0.05 & -0.05\end{array}\right)\left(\begin{array}{c} x_1\\ x_2\end{array}\right)= \left(\begin{array}{c} 0\\ 0\end{array}\right)\]
+      \[\left\{\begin{array}{l} -0.9x_1+0.9x_2=0\\ 0.05x_1-0.05x_2=0 \end{array}\right.\]
+      de donde obtenemos que: $x_1=x_2$, por tanto:
+      \[v_1=\left(\begin{array}{c} 1\\ 1\end{array}\right)\]
+      
+      El vector propio $v_2$ asociado al valor propio $\lambda_2=0.05$ se obtiene como:
+      \[(P-\lambda_2 I)x=0\]
+      \[(P-0.05I)x=0\]
+      \[\left[\left(\begin{array}{cc} 0.1 & 0.9\\ 0.05 & 0.95\end{array}\right) - \left(\begin{array}{cc} 0.05 & 0\\ 0 & 0.05\end{array}\right)\right]\left(\begin{array}{c} x_1\\ x_2\end{array}\right)= \left(\begin{array}{c} 0\\ 0\end{array}\right)\]
+      \[\left(\begin{array}{cc} 0.05 & 0.9\\ 0.05 & 0.9\end{array}\right)\left(\begin{array}{c} x_1\\ x_2\end{array}\right)= \left(\begin{array}{c} 0\\ 0\end{array}\right)\]
+      \[\left\{\begin{array}{l} 0.05x_1+0.9x_2=0\\ 0.05x_1+0.9x_2=0 \end{array}\right.\]
+      de donde obtenemos que: $x_1=-18x_2$, por tanto:
+      \[v_2=\left(\begin{array}{c} -18\\ 1\end{array}\right)\]
+      
+      De lo anterior obtenemos las siguientes matrices:
+      \[J=\left(\begin{array}{cc} 1 & 0 \\ 0 & 0.05\end{array}\right)\]
+      
+      \[H=\left(\begin{array}{cc} 1 & -18 \\ 1 & 1\end{array}\right)\]
+      
+      \[H^{-1}=\frac{1}{19}\left(\begin{array}{cc} 1 & 18 \\ -1 & 1\end{array}\right)\]
+      
+      Por tanto, la matriz $P$ puede ser descompuesta como el siguiente producto:
+      \begin{align*}
+            P &= HJH^{-1}\\
+              &= \frac{1}{19}\left(\begin{array}{cc} 1 & -18\\ 1 & 1\end{array}\right) \left(\begin{array}{cc} 1 & 0\\ 0 & 0.05\end{array}\right) \left(\begin{array}{cc} 1 & 18\\ -1 & 1\end{array}\right)
+      \end{align*}
+      
+      además, la n-ésima potencia de la matriz se obtiene como:
+      \begin{align*}
+            P^{n} &= HJ^{n}H^{-1}\\
+                  &= \frac{1}{19}\left(\begin{array}{cc} 1 & -18\\ 1 & 1\end{array}\right) \left(\begin{array}{cc} 1 & 0\\ 0 & 0.05^{n}\end{array}\right) \left(\begin{array}{cc} 1 & 18\\ -1 & 1\end{array}\right)\\
+                  &= \frac{1}{19}\left(\begin{array}{cc} 1+18*0.05^n & 18-18*0.05^n\\ 1-0.05^n & 18+0.05^n\end{array}\right)
+      \end{align*}
+      
+      Por último, la probabilidad de que una máquina no averiada $V_0=(0,1)$ tampoco lo haga en $n$ meses es:
+      \begin{align*}
+            V_n &= V_0 P^n\\
+                &= (0,1). \frac{1}{19}\left(\begin{array}{cc} 1+18*0.05^n & 18-18*0.05^n\\ 1-0.05^n & 18+0.05^n\end{array}\right)\\
+                &= \frac{1}{19}\left(1-0.05^n, 18+0.05^n\right)
+      \end{align*}
+      
+      \[P(X_n=F| X_0=F) = \frac{1}{19}\left(18+0.05^n\right)\]
+      
+      \item[d)] Calcular la probabilidad de que, si una máquina se averió este mes, se averíe también durante cuatro meses consecutivos.
+      
+      \begin{align*}
+            P(X_{4}=A, X_{3}=A, X_{2}=A, X_{1}=A| X_0=A) &= P_{AA}.P_{AA}.P_{AA}.P_{AA}\\
+            &= (0.1)^4\\
+            &= 0.0001
+      \end{align*}
+      
+      \item[e)] Calcular la probabilidad de que, si la máquina se averió el presente mes, al cabo de n meses, no se averíe durante dos meses consecutivos.
+      
+      \begin{align*}
+      P(X_{n+1}=F, X_n=F|X_0=A) &= P_{AF}^{(0,n)}.P_{FF}\\
+                                &= \frac{1}{19}\left(18-18*0.05^n\right)(0.95)
+      \end{align*}
+      
+      \item[f)] Obtenga el porcentaje de meses en que se averiará la máquina a largo plazo.
+      
+      \begin{align*}
+      \lim_{n\to \empty} P^n &= \lim_{n\to \empty} \frac{1}{19}\left(\begin{array}{cc} 1+18*0.05^n & 18-18*0.05^n\\ 1-0.05^n & 18+0.05^n\end{array}\right)\\
+      &= \frac{1}{19}\left(\begin{array}{cc} 1+18\displaystyle\frac{5^n}{100^5} & 18-18*\displaystyle\frac{5^n}{100^5}\\ 1-\displaystyle\frac{5^n}{100^5} & 18+\displaystyle\frac{5^n}{100^5}\end{array}\right)\\
+      &= \frac{1}{19}\left(\begin{array}{cc} 1 & 18\\ 1 & 18\end{array}\right)\\
+      &= \left(\begin{array}{cc} 1/19 & 18/19\\ 1/19 & 18/19\end{array}\right)\\
+      &= \pi \quad \to \quad \text{Ergódica}
+      \end{align*}
+      
+      \[\pi_A=\frac{1}{19}\quad \text{ y }\quad \pi_F=\frac{18}{19}\]
+      
+      por tanto, el porcentaje de meses en que se averiará la máquina a largo plazo es: $\frac{1}{19}=5.26\%$
+      
+      \item[g)] A largo plazo, si una máquina está averiada, obtenga el número medio de meses que transcurrirán hasta que vuelva a averiarse.
+      
+      \[C(A)=\{A,F\}=S \quad \to \quad \text{Irreducible}\]
+      Tiene finitos estados, por lo cual no es nula. En la diagonal de la matriz existen elementos mayores que cero, en tal razón la cadena es aperiódica o regular.
+      
+      \[\pi_A=\frac{1}{\mu_A} \quad \to \quad \mu_A=\frac{1}{\pi_A}\]
+      es decir,
+      \[\mu_A=19 \text{ meses}\]
+      
+      
+\end{itemize}
+
+
+
+\end{document}
